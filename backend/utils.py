@@ -56,21 +56,18 @@ def parse_resume(resume_file, model='command'):
     return parsed_resume
 
 
-def create_user(parsed_resume):
+def create_user(parsed_resume, email):
     """Inserts a user into the database if they don't already exist."""
     users = db["users"]
 
-    # Check if user already exists (by name and school)
     existing_user = users.find_one({
-        "name": parsed_resume["name"],
-        "school": parsed_resume["school"]
+        "email": email
     })
 
     if existing_user:
         return {"message": "User already exists", "user_id": str(existing_user["_id"])}
 
-    # Insert new user
-    result = users.insert_one(parsed_resume)
+    result = users.insert_one({"profile": parsed_resume, "email": email})
     return {"message": "User created", "user_id": str(result.inserted_id)}
 
 def match(user1, user2):
