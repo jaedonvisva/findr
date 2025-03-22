@@ -17,15 +17,13 @@ db = mongo_client["findr"]
 
 def parse_resume(resume_file, model='command'):
     # Read resume text
-    if resume_file.endswith('.pdf'):
-        with open(resume_file, 'rb') as file:
-            pdf = PyPDF2.PdfReader(file)
-            resume_text = ""
-            for page in range(len(pdf.pages)):
-                resume_text += pdf.pages[page].extract_text()
+    resume_text = ""
+    if resume_file.filename.endswith('.pdf'):
+        pdf = PyPDF2.PdfReader(resume_file)
+        for page in range(len(pdf.pages)):
+            resume_text += pdf.pages[page].extract_text()
     else:
-        with open(resume_file, 'r') as file:
-            resume_text = file.read()
+        resume_text = resume_file.read().decode("utf-8")
     
     # Define prompts
     name_prompt = f"Extract the person's first and last name from the following resume. Output the full name without any additional text:\n\n{resume_text}\n\nName:"

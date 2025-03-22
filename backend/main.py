@@ -8,10 +8,14 @@ CORS(app)
 
 @app.route('/parse', methods=['POST'])
 def parse():
+    if 'resume' not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+
     resume_file = request.files['resume']
     parsed_resume = parse_resume(resume_file)
     create_user(parsed_resume)
-    return parsed_resume
+
+    return jsonify(parsed_resume), 200
 
 @app.route('/remove_match', methods=['POST'])
 def removematch():
